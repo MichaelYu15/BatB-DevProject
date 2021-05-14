@@ -1,0 +1,53 @@
+Student Name: Michael Yu 
+SID: 3035824284
+
+1. How is web3 used in componentDidMount? How does the user connect to the blockchain network? 
+This is metamask!
+
+web3 is used to get the user's accounts and then to get the contract instance by connecting
+to the network. I suppose this is where metamask is involved in, so the user connects to 
+the blockchain network by logging into their metamask account. Finally, componentDidMount ends
+by setting web3 as a state variable to be retrieved when later functions need it.
+
+2. Pick one function: fetchLoot, addLoot, or buyLoot and explain in detail what it is doing and 
+how it works. Every line please!
+
+Function: buyLoot (line numbers correspond to the line number in App.js)
+
+Line 105: This function takes in a variable named ev, which is the event that occurs after you 
+press the button that the buyLoot function is assigned to. 
+Line 106: The function then retrieves the contract and accounts variables from the current state.
+Line 108: The function cancels the current event that was passed into the button with 
+ev.preventDefault()
+Line 109: The current state is set with the value loading = true
+Line 110-111: The function then calls the buyToken method from the MerchToken.sol constract that 
+we wrote and passes in the id of the item to be bought. (this.state.buying.id) Then, the function 
+sends the the token from your account (accounts[0]) with the value of the item's price.
+Line 112: After that promise is completed, we have successfully bought the item and now can
+fetch the loot. 
+Line 113: After fetching the loot, we set the state of buying to null, as we have finished 
+buying the item.
+Line 114: This section of the promise catches any error that may have occurred, which is 
+represented by the variable err.
+Line 115: The err is logged to the console.
+Line 116: Creates an alert with the message 'Creating the token faile!' for the user to see 
+Line 117: The state of buying is set to null, as an error has occurred so we reset the
+information of the item to be bought.
+
+
+Reference:
+  buyLoot = (ev) => {
+    const { contract, accounts } = this.state;
+
+    ev.preventDefault();
+    this.setState({ loading: true });
+    contract.methods.buyToken(this.state.buying.id).send(
+      { from: accounts[0], value: this.state.buying.price }
+    ).then(() => this.fetchLoot()).then(() => {
+      this.setState({ buying: null });
+    }, (err) => {
+      console.error(err);
+      alert('Creating the token faile!');
+      this.setState({ buying: null });
+    })
+  }
